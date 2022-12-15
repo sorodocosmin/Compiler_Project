@@ -1,0 +1,83 @@
+START_GLOBAL_DECLARATIONS
+int @nume1, @nume2;
+
+int @nume2;
+
+float @nume2;
+
+END_GLOBAL_DECLARATIONS
+
+
+
+START_FUNCTION_DECLARATION
+
+int $functionn1(){};
+string $f2(int @a , int @b){
+    int @c, @c1 ;
+    @c = @d;
+};
+
+END_FUNCTION_DECLARATION
+
+
+
+START_USER_DEFINED_TYPES
+
+my_type #Name_my_type1 {
+    int @var1, @var2,@var3, @var4,@var5, @var6;
+    char @var7,@var8;
+    string @var9;
+    float @var10;
+};
+
+my_type #Name_my_type2 {
+
+};
+
+my_type #Name_my_type3 {
+    string @var;
+};
+
+END_USER_DEFINED_TYPES
+
+
+
+START_MAIN
+
+int @a,@b;
+
+float @a;
+
+@a=@b;
+
+if ( @a ){
+    @c=1;
+}
+else{
+
+};
+
+@a = $f2( );
+
+if (@cddcd){
+   float  @x;
+};
+
+if (@cddcd){
+
+};
+
+while (0){
+    if (23){
+        float  @x;
+    };
+};
+
+for ( @a=$f2(); ~~ @nume_var ~~ @a_1 = 1;  ) {
+
+};
+
+for (~~ ~~) {};
+
+
+END_MAIN
