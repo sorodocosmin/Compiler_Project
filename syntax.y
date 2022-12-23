@@ -4,17 +4,35 @@ extern FILE* yyin;
 extern char* yytext;
 extern int yylineno;
 %}
-%token START_GLOBAL_DECLR END_GLOBAL_DECLR START_FUNCTION_DECLR END_FUNCTION_DECLR START_USR_DEFINED END_USR_DEFINED START_MAIN END_MAIN
-%token NAME_VARIABLE PREDEF_TYPE ASSIGN NUMBER FUNCTION_NAME MY_TYPE MY_TYPE_NAME 
-%token IF ELSE WHILE FOR FOR_DELIMITATOR
+%token _START_GLOBAL_DECLR _END_GLOBAL_DECLR _START_FUNCTION_DECLR _END_FUNCTION_DECLR _START_USR_DEFINED _END_USR_DEFINED _START_MAIN _END_MAIN
+%token _NAME_VARIABLE _PREDEF_TYPE _ASSIGN _NUMBER_NEG _NUMBER_POS _FUNCTION_NAME _MY_TYPE _MY_TYPE_NAME 
+%token _IF _ELSE _WHILE _FOR _FOR_DELIMITATOR
+%token _COND_TRUE _COND_FALSE
+%token _LESS_THAN _LESS_OR_EQ _GREATER_THAN _GREATER_OR_EQ _EQUAL
+%token _ADD _DIVIDE _MULTIPLY _SUBSTRACT
+%token _AND _OR _NOT
+
+%left _OR
+%left _AND
+%left _NOT
+%left _LESS_THAN
+%left _LESS_OR_EQ
+%left _GREATER_THAN
+%left _GREATER_OR_EQ
+%left _EQUAL
+%left _ADD
+%left _SUBSTRACT
+%left _MULTIPLY
+%left _DIVIDE
+
 %start PROGRAM
 %%
 PROGRAM:  
+          USR_DEFINED_TYPES
+
           GLOBAL
           
           FUNCTIONS
-          
-          USR_DEFINED_TYPES
 
           MAIN
 
@@ -24,26 +42,28 @@ PROGRAM:
 variable_declarations :  one_variable_declaration ';'
                       |  one_variable_declaration ';' variable_declarations 
 	                 ;
-one_variable_declaration :    PREDEF_TYPE LIST_VARIABLES //incoplete ? + customized types 
-                         ;
+one_variable_declaration :    _PREDEF_TYPE LIST_VARIABLES //incomplete ? + customized types 
+                         ;  
 
-LIST_VARIABLES : NAME_VARIABLE 
-               | NAME_VARIABLE ',' LIST_VARIABLES
+LIST_VARIABLES : _NAME_VARIABLE 
+               | _NAME_VARIABLE ARRAY
+               | _NAME_VARIABLE ',' LIST_VARIABLES
                ;
-
+ARRAY : '[' _NUMBER_POS ']'
+      | '[' _NUMBER_POS ']'ARRAY  
 
 function_declarations    : one_function_declaration ';'
                          | one_function_declaration ';' function_declarations
                          ;
-one_function_declaration : PREDEF_TYPE FUNCTION_NAME '(' parameters_list ')' '{'
+one_function_declaration : _PREDEF_TYPE _FUNCTION_NAME '(' parameters_list ')' '{'
                               list
                               '}'
-                         | PREDEF_TYPE FUNCTION_NAME '(' ')' '{'
+                         | _PREDEF_TYPE _FUNCTION_NAME '(' ')' '{'
                               list
                               '}'
-                         | PREDEF_TYPE FUNCTION_NAME '(' parameters_list ')' '{'
+                         | _PREDEF_TYPE _FUNCTION_NAME '(' parameters_list ')' '{'
                               '}'
-                         | PREDEF_TYPE FUNCTION_NAME '(' ')' '{'
+                         | _PREDEF_TYPE _FUNCTION_NAME '(' ')' '{'
                               '}'
                          ;
 
@@ -51,55 +71,60 @@ parameters_list : one_parameter
             | one_parameter ',' parameters_list    
             ;
             
-one_parameter : PREDEF_TYPE NAME_VARIABLE
+one_parameter : _PREDEF_TYPE _NAME_VARIABLE
               ;
 
 customized_type_declarations : one_mytype_declaration ';'
                              | one_mytype_declaration ';' customized_type_declarations
                              ;
-one_mytype_declaration : MY_TYPE MY_TYPE_NAME '{'
-                         variable_declarations
+one_mytype_declaration : _MY_TYPE _MY_TYPE_NAME '{'
+                         list_mytype_declarations
                          '}'
-                       | MY_TYPE MY_TYPE_NAME '{'
-                    
+                       | _MY_TYPE _MY_TYPE_NAME '{'
+                       
                          '}'
                        ;
+list_mytype_declarations : one_variable_declaration ';'
+                         | one_function_declaration ';'
+                         | one_function_declaration ';' list_mytype_declarations
+                         | one_variable_declaration ';' list_mytype_declarations
+                         ;
 //GLOBAL DEFINITIONS
-GLOBAL :  START_GLOBAL_DECLR 
+GLOBAL :  _START_GLOBAL_DECLR 
                variable_declarations 
-          END_GLOBAL_DECLR
+          _END_GLOBAL_DECLR
 
        |
-          START_GLOBAL_DECLR 
+          _START_GLOBAL_DECLR 
                 
-          END_GLOBAL_DECLR
+          _END_GLOBAL_DECLR
      ;  
 //FUNCTIONS
-FUNCTIONS :    START_FUNCTION_DECLR
+FUNCTIONS :    _START_FUNCTION_DECLR
                     function_declarations
-               END_FUNCTION_DECLR
+               _END_FUNCTION_DECLR
 
-          |    START_FUNCTION_DECLR
+          |    _START_FUNCTION_DECLR
                     
-               END_FUNCTION_DECLR
+               _END_FUNCTION_DECLR
           ;
 // User Defined Types
-USR_DEFINED_TYPES : START_USR_DEFINED
+USR_DEFINED_TYPES : _START_USR_DEFINED
                          customized_type_declarations
-                    END_USR_DEFINED
-                  /*| START_USR_DEFINED
+                    _END_USR_DEFINED
+                  |  _START_USR_DEFINED
                     
-                    END_USR_DEFINED
-                    */
+                    _END_USR_DEFINED
+                    
                   ;
 // MAIN
-MAIN :    START_MAIN
+MAIN :    _START_MAIN
                 list 
-          END_MAIN
+          _END_MAIN
      
-     |    START_MAIN
+     |    _START_MAIN
                  
-          END_MAIN
+          _END_MAIN
      ;
      
 /* lista instructiuni */
@@ -109,52 +134,83 @@ list : statement ';'
 
 /* instructiune */
 statement: one_variable_declaration 
-         | NAME_VARIABLE ASSIGN NAME_VARIABLE
-         | NAME_VARIABLE ASSIGN NUMBER
-         | NAME_VARIABLE ASSIGN FUNCTION_NAME '(' list_parameters_for_function ')'
-         | NAME_VARIABLE ASSIGN FUNCTION_NAME '(' ')'
-         | FUNCTION_NAME '(' list_parameters_for_function ')'
-         | FUNCTION_NAME '(' ')'
+         | ASSIGN_STATEMENT 
+         | _FUNCTION_NAME '(' list_parameters_for_function ')'
+         | _FUNCTION_NAME '(' ')'
          | IF_ELSE_STATEMENT
          | IF_THEN
          | WHILE_STATEMENT
          | FOR_STATEMENT
          ;
-IF_ELSE_STATEMENT : IF '(' COND ')' '{' list '}' ELSE '{' list '}'
-                  | IF '(' COND ')' '{'  '}' ELSE '{' list '}'
-                  | IF '(' COND ')' '{' list '}' ELSE '{'  '}'
-                  | IF '(' COND ')' '{'  '}' ELSE '{'  '}'
+ASSIGN_STATEMENT : _NAME_VARIABLE _ASSIGN _NAME_VARIABLE
+                 | _NAME_VARIABLE _ASSIGN _NUMBER_POS
+                 | _NAME_VARIABLE _ASSIGN _NUMBER_NEG
+                 | _NAME_VARIABLE _ASSIGN _FUNCTION_NAME '(' list_parameters_for_function ')'
+                 | _NAME_VARIABLE _ASSIGN _FUNCTION_NAME '(' ')'
+                 ;
+IF_ELSE_STATEMENT : _IF '(' COND ')' '{' list '}' _ELSE '{' list '}'
+                  | _IF '(' COND ')' '{'  '}' _ELSE '{' list '}' {printf("WARNING: You don't have any statement between brackets at the IF_ELSE statement which ends at line %d\n(You might wanna take into cosideration to use the IF_THEN statement)\n",yylineno);}
+                  | _IF '(' COND ')' '{' list '}' _ELSE '{'  '}'
+                  | _IF '(' COND ')' '{'  '}' _ELSE '{'  '}'
                   ;
-IF_THEN   : IF '(' COND ')' '{' list '}'
-          | IF '(' COND ')' '{'  '}'
+IF_THEN   : _IF '(' COND ')' '{' list '}'
+          | _IF '(' COND ')' '{'  '}' {printf("WARNING: You don't have any statement between brackets at line %d\n",yylineno);}
           ;
-WHILE_STATEMENT : WHILE '(' COND ')' '{' list '}'
-                | WHILE '(' COND ')' '{'  '}'
+WHILE_STATEMENT : _WHILE '(' COND ')' '{' list '}'
+                | _WHILE '(' COND ')' '{'  '}'
                 ;
-FOR_STATEMENT  : FOR '(' list FOR_DELIMITATOR COND FOR_DELIMITATOR list ')' '{' list '}'//1111
-               | FOR '(' list FOR_DELIMITATOR COND FOR_DELIMITATOR list ')' '{'      '}'//1110
-               | FOR '(' list FOR_DELIMITATOR COND FOR_DELIMITATOR      ')' '{' list '}'//1101
-               | FOR '(' list FOR_DELIMITATOR COND FOR_DELIMITATOR      ')' '{'      '}'//1100
-               | FOR '(' list FOR_DELIMITATOR      FOR_DELIMITATOR list ')' '{' list '}'//1011
-               | FOR '(' list FOR_DELIMITATOR      FOR_DELIMITATOR list ')' '{'      '}'//1010
-               | FOR '(' list FOR_DELIMITATOR      FOR_DELIMITATOR      ')' '{' list '}'//1001
-               | FOR '(' list FOR_DELIMITATOR      FOR_DELIMITATOR      ')' '{'      '}'//1000
-               | FOR '('      FOR_DELIMITATOR COND FOR_DELIMITATOR list ')' '{' list '}'//0111
-               | FOR '('      FOR_DELIMITATOR COND FOR_DELIMITATOR list ')' '{'      '}'//0110
-               | FOR '('      FOR_DELIMITATOR COND FOR_DELIMITATOR      ')' '{' list '}'//0101
-               | FOR '('      FOR_DELIMITATOR COND FOR_DELIMITATOR      ')' '{'      '}'//0100
-               | FOR '('      FOR_DELIMITATOR      FOR_DELIMITATOR list ')' '{' list '}'//0011
-               | FOR '('      FOR_DELIMITATOR      FOR_DELIMITATOR list ')' '{'      '}'//0010
-               | FOR '('      FOR_DELIMITATOR      FOR_DELIMITATOR      ')' '{' list '}'//0001
-               | FOR '('      FOR_DELIMITATOR      FOR_DELIMITATOR      ')' '{'      '}'//0000
+FOR_STATEMENT  : _FOR '(' list _FOR_DELIMITATOR COND _FOR_DELIMITATOR list ')' '{' list '}'//1111
+               | _FOR '(' list _FOR_DELIMITATOR COND _FOR_DELIMITATOR list ')' '{'      '}'//1110
+               | _FOR '(' list _FOR_DELIMITATOR COND _FOR_DELIMITATOR      ')' '{' list '}'//1101
+               | _FOR '(' list _FOR_DELIMITATOR COND _FOR_DELIMITATOR      ')' '{'      '}'//1100
+               | _FOR '(' list _FOR_DELIMITATOR      _FOR_DELIMITATOR list ')' '{' list '}'//1011
+               | _FOR '(' list _FOR_DELIMITATOR      _FOR_DELIMITATOR list ')' '{'      '}'//1010
+               | _FOR '(' list _FOR_DELIMITATOR      _FOR_DELIMITATOR      ')' '{' list '}'//1001
+               | _FOR '(' list _FOR_DELIMITATOR      _FOR_DELIMITATOR      ')' '{'      '}'//1000
+               | _FOR '('      _FOR_DELIMITATOR COND _FOR_DELIMITATOR list ')' '{' list '}'//0111
+               | _FOR '('      _FOR_DELIMITATOR COND _FOR_DELIMITATOR list ')' '{'      '}'//0110
+               | _FOR '('      _FOR_DELIMITATOR COND _FOR_DELIMITATOR      ')' '{' list '}'//0101
+               | _FOR '('      _FOR_DELIMITATOR COND _FOR_DELIMITATOR      ')' '{'      '}'//0100
+               | _FOR '('      _FOR_DELIMITATOR      _FOR_DELIMITATOR list ')' '{' list '}'//0011
+               | _FOR '('      _FOR_DELIMITATOR      _FOR_DELIMITATOR list ')' '{'      '}'//0010
+               | _FOR '('      _FOR_DELIMITATOR      _FOR_DELIMITATOR      ')' '{' list '}'//0001
+               | _FOR '('      _FOR_DELIMITATOR      _FOR_DELIMITATOR      ')' '{'      '}'//0000
                ;
-COND : NAME_VARIABLE
-     | NUMBER
+COND : _COND_TRUE
+     | _COND_FALSE
+     | COND _AND COND
+     | COND _OR COND
+     | _NOT COND
+     | EVAL_ARITHM_EXPR _EQUAL EVAL_ARITHM_EXPR
+     | EVAL_ARITHM_EXPR _LESS_THAN EVAL_ARITHM_EXPR
+     | EVAL_ARITHM_EXPR _LESS_OR_EQ EVAL_ARITHM_EXPR
+     | EVAL_ARITHM_EXPR _GREATER_THAN EVAL_ARITHM_EXPR
+     | EVAL_ARITHM_EXPR _GREATER_OR_EQ EVAL_ARITHM_EXPR
+     | '(' COND ')'
      ;
-list_parameters_for_function: NUMBER
-                            | NAME_VARIABLE
-                            | NUMBER ',' list_parameters_for_function
-                            | NAME_VARIABLE ',' list_parameters_for_function
+
+EVAL_ARITHM_EXPR : EVAL_ARITHM_EXPR _ADD EVAL_ARITHM_EXPR
+                 | EVAL_ARITHM_EXPR _SUBSTRACT EVAL_ARITHM_EXPR
+                 | EVAL_ARITHM_EXPR _MULTIPLY EVAL_ARITHM_EXPR
+                 | EVAL_ARITHM_EXPR _DIVIDE EVAL_ARITHM_EXPR
+                 | EV_TO_NR 
+                 | '(' EVAL_ARITHM_EXPR ')'
+                 ;
+
+EV_TO_NR : _NUMBER_NEG
+         | _NUMBER_POS
+         | _NAME_VARIABLE
+         | _FUNCTION_NAME '(' list_parameters_for_function ')'
+         | _FUNCTION_NAME '(' ')'
+         ;
+
+
+list_parameters_for_function: _NUMBER_POS
+                            | _NUMBER_NEG
+                            | _NAME_VARIABLE
+                            | _NUMBER_POS ',' list_parameters_for_function
+                            | _NUMBER_NEG ',' list_parameters_for_function
+                            | _NAME_VARIABLE ',' list_parameters_for_function
            ;
 %%
 
