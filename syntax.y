@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+extern FILE *  variables_file;
 extern FILE* yyin;
 extern char* yytext;
 extern int yylineno;
@@ -57,7 +58,7 @@ function_declarations    : one_function_declaration ';'
                          ;
 one_function_declaration : _PREDEF_TYPE _FUNCTION_NAME '(' parameters_list ')' '{'
                               list
-                              '}'
+                              '}' 
                          | _PREDEF_TYPE _FUNCTION_NAME '(' ')' '{'
                               list
                               '}'
@@ -142,11 +143,8 @@ statement: one_variable_declaration
          | WHILE_STATEMENT
          | FOR_STATEMENT
          ;
-ASSIGN_STATEMENT : _NAME_VARIABLE _ASSIGN _NAME_VARIABLE
-                 | _NAME_VARIABLE _ASSIGN _NUMBER_POS
-                 | _NAME_VARIABLE _ASSIGN _NUMBER_NEG
-                 | _NAME_VARIABLE _ASSIGN _FUNCTION_NAME '(' list_parameters_for_function ')'
-                 | _NAME_VARIABLE _ASSIGN _FUNCTION_NAME '(' ')'
+ASSIGN_STATEMENT : _NAME_VARIABLE _ASSIGN EVAL_ARITHM_EXPR
+                 | _NAME_VARIABLE _ASSIGN COND //if the variable is a bool
                  ;
 IF_ELSE_STATEMENT : _IF '(' COND ')' '{' list '}' _ELSE '{' list '}'
                   | _IF '(' COND ')' '{'  '}' _ELSE '{' list '}' {printf("WARNING: You don't have any statement between brackets at the IF_ELSE statement which ends at line %d\n(You might wanna take into cosideration to use the IF_THEN statement)\n",yylineno);}
@@ -217,9 +215,10 @@ list_parameters_for_function: _NUMBER_POS
 int yyerror(char * s){
     printf("eroare: %s la linia:%d\n",s,yylineno);
 }
-
+FILE * variables_file;
 int main(int argc, char** argv){
     yyin=fopen(argv[1],"r");
+    variables_file = fopen ("symbol_table.txt", "w+");
     yyparse();
     return 0;
 } 

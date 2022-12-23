@@ -40,7 +40,7 @@
 "|"                             {return _OR;}
 "!"                             {return _NOT;}
 
-"int"|"float"|"char"|"string"|"bool"                {return _PREDEF_TYPE;}
+"int"|"float"|"char"|"string"|"bool"                { return _PREDEF_TYPE;}
 @[_a-zA-Z][_a-zA-Z0-9]*         {return _NAME_VARIABLE;}
 $[_a-zA-Z][_a-zA-Z0-9]*         {return _FUNCTION_NAME;}
 #[_a-zA-Z][_a-zA-Z0-9]*         {return _MY_TYPE_NAME;}
