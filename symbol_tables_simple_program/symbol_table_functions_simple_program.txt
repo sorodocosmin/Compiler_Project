@@ -1,0 +1,8 @@
+
+
+Lista de functii : 
+
+	 my_type #Name_my_type1 $fun1 (int @a,);
+
+	 INT $fun2 (float @a,float @nume1,);
+

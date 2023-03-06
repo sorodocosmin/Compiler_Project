@@ -1,0 +1,20 @@
+
+
+Lista de functii : 
+
+	 my_type #Name_my_type1 $fun1 ();
+
+	 my_type #Name_my_type1 $fun (int @a,);
+
+	 STRING $function1 (int @a1,int @a2,int @a3,int @a4,int @a5,int @a6,);
+
+	 INT $cosmin (int @cosmin[100],);
+
+	 INT $f1 (int @a,);
+
+	 INT $function (my_type #Name_my_type3 @aaa,int @ab,my_type #Name_my_type3 @a,);
+
+	 INT $cosmin1 (my_type #Name_my_type1 @c,int @aa,my_type #Name_my_type1 @cc,float @a,);
+
+	 INT $cosmin2 (int @c,);
+

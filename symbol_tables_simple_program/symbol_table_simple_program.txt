@@ -1,0 +1,25 @@
+
+
+Lista de tipuri (mystruct) noi
+
+my_type #type_1 {
+Variables :
+	 int @ab;
+	 string @name;
+Methods :
+	 STRING $nr (int @a,char @b,);
+	 INT $int_ret (int @a,);
+}
+
+
+Lista de variabile : 
+
+Const : true | Type [STRING]| name ="@variable_1", value=""ads"" |
+Type [ mystruct #type_1 ] name = @variable_of_type_struct {
+VALUES:
+Const : false | Type [INT] | name ="@ab" | value=2 |
+Const : false | Type [STRING]| name ="@name", value="" |
+}
+Const : false | Type [INT] | name ="@number" | value=2 |
+Const : false | Type [STRING]| name ="@str1", value=""ad"" |
+Const : false | Type [STRING]| name ="@str2", value=""ad"" |

@@ -1,0 +1,49 @@
+                                            START_USER_DEFINED_TYPES
+
+my_type #type_1{
+    int @ab;
+    string @name;
+    string $nr (int @a, char @b){}
+    int $int_ret(int @a){}
+}
+
+my_type #type_2{
+    float @c;
+}
+
+
+                                            END_USER_DEFINED_TYPES
+
+START_GLOBAL_DECLARATIONS
+const int @nume1 = 2 +' -1;
+const string @a = "ads";
+
+my_type #type_1 @var_struct;
+
+END_GLOBAL_DECLARATIONS
+
+
+
+START_FUNCTION_DECLARATIONS
+
+my_type #Name_my_type1 $fun1 (int @a){}
+
+int $fun2(float @a, float @nume1){
+    int @number = 2;
+}
+
+
+END_FUNCTION_DECLARATIONS
+
+                                        START_MAIN
+
+string @str1 = "abc";
+Eval(@a);
+string @str2 = "ad";
+Eval(1 +' ( 2 /' 3) +' @var_struct::@name);
+@str1 = @str2;
+@var_struct::@ab = 2;
+Eval(@var_struct::@ab );
+
+
+                                        END_MAIN

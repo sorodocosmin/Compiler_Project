@@ -1,0 +1,134 @@
+                                            START_USER_DEFINED_TYPES
+
+my_type #type_1{
+    int @ab;
+    string $nr (int @a[1u]){}
+}
+
+my_type #type_2{
+    float @c;
+}
+
+my_type #Name_my_type1 {
+    int @var1[6u];
+    char @var7;
+    string @var9;
+    float @var10 ;
+    string @var11;
+    int @vec[2u];
+    string @vector[20u];
+    int @nr[10u][2u];
+
+    string $gg (int @a[2u]){
+
+    }
+    char $g1 (my_type #type_1 @s){
+
+    }
+}
+
+
+my_type #Name_my_type3 {
+    string @var;
+    int @ab ;
+    int @vec_int[20u];
+    int @matrix_int[10u][4u];
+    float @valoare_float;
+    my_type #Name_my_type3 $fun (int @a, int @b){
+
+    }
+}
+
+                                            END_USER_DEFINED_TYPES
+
+START_GLOBAL_DECLARATIONS
+const int @nume1 = 2 +' -1;
+const string @a = "ads";
+int @aa;
+int @vector[15u];
+my_type #Name_my_type3 @d;
+my_type #Name_my_type1 @interesting;
+my_type #type_1 @hmm;
+END_GLOBAL_DECLARATIONS
+
+
+
+START_FUNCTION_DECLARATIONS
+
+my_type #Name_my_type1 $fun1 (){}
+
+my_type #Name_my_type1 $fun (int @a){
+    int @ac;
+}
+
+
+string $function1(int @a1, int @a2,int @a3,int @a4, int @a5, int @a6){}
+
+int $cosmin( int @cosmin[100u]){
+    int @a1;
+    my_type #Name_my_type1 @c;
+    int @val;
+
+}
+int $f1(int @a){}
+
+int $function (my_type #Name_my_type3 @aaa ,int @ab, my_type #Name_my_type3 @a){
+
+ }
+ int $cosmin1( my_type #Name_my_type1 @c, int @aa,my_type #Name_my_type1 @cc,float @a){
+    int @a2;
+    string @name;
+
+}
+int $cosmin2( int @c){
+    int @valoare_float;
+
+}
+
+
+END_FUNCTION_DECLARATIONS
+
+START_MAIN
+
+float @a2_ = 1.0/'0.1;
+TypeOf(1+'2+'23>=10);
+
+while (true){
+int @zs;
+const int @v = 3;
+int @v1;
+@v1 = 3;
+Eval(@v1);
+if (@a2+'2.989+'23.0>=@a2){
+    for(  @v1= 5-'10 ; 2<3;@v1=1+'2){
+        @v1 = @v +' 1;
+    }
+}
+}
+
+my_type #Name_my_type3 @ab1;
+my_type #type_1 @var3;
+int @e = @var3::@ab;
+string @aaaa;
+
+
+TypeOf(1);
+my_type #Name_my_type3 @cc;
+Eval(@cc::@matrix_int[3u][0u]);
+int @q1[10u];
+int @co = 2;
+Eval(@co);
+Eval(2*'10+'1);
+
+Eval(false <= true);
+
+Eval(@q1[2u] +' (1 +' 2/'3));
+
+TypeOf(@ab1::@vec_int[20u]);
+
+
+
+
+float @matrix[5u][5u];
+string @idk = "23";
+END_MAIN
